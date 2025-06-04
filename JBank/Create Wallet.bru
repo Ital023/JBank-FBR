@@ -1,0 +1,24 @@
+meta {
+  name: Create Wallet
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/wallets
+  body: json
+  auth: inherit
+}
+
+params:query {
+  ~email: dylan@gmail.com
+  ~cpf: 123
+}
+
+body:json {
+  {
+    "cpf": "61216515395",
+    "email": "contadoitalo911@gmail.com",
+    "name": "Italo Miranda"
+  }
+}
