@@ -1,54 +1,33 @@
 package io.github.Ital023.jbank.controller;
 
 import io.github.Ital023.jbank.controller.dto.CreateWalletDto;
-import io.github.Ital023.jbank.controller.dto.DepositMoneyDto;
-import io.github.Ital023.jbank.services.WalletService;
-import jakarta.servlet.http.HttpServletRequest;
+
+import io.github.Ital023.jbank.controller.dto.TransferMoneyDto;
+import io.github.Ital023.jbank.services.TransferService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.UUID;
+
 
 @RestController
-@RequestMapping(path = "/wallets")
-public class WalletController {
+@RequestMapping(path = "/transfers")
+public class TransferController {
 
-    private final WalletService walletService;
+    private final TransferService transferService;
 
-    public WalletController(WalletService walletService) {
-        this.walletService = walletService;
+    public TransferController(TransferService transferService) {
+        this.transferService = transferService;
     }
 
     @PostMapping
-    public ResponseEntity<Void> createWallet(@RequestBody @Valid CreateWalletDto dto) {
-        var wallet = walletService.createWallet(dto);
+    public ResponseEntity<Void> transfer(@RequestBody @Valid TransferMoneyDto dto) {
+        transferService.transferMoney(dto);
 
-        return ResponseEntity.created(URI.create("/wallets/" + wallet.getWalletId().toString())).build();
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping(path = "/{walletId}")
-    public ResponseEntity<Void> deleteWallet(@PathVariable("walletId") UUID walletId) {
-        var deleted = walletService.deleteWallet(walletId);
-
-        return deleted ?
-                ResponseEntity.noContent().build() :
-                ResponseEntity.notFound().build();
-
-    }
-
-    @PostMapping(path = "{walletId}/deposits")
-    public ResponseEntity<Void> depositMoney(@PathVariable("walletId") UUID walletId,
-                                             @RequestBody @Valid DepositMoneyDto dto,
-                                             HttpServletRequest request) {
-
-        String ipAddress = request.getAttribute("x-user-ip").toString();
-
-       walletService.depositMoney(walletId, dto, ipAddress);
-
-       return ResponseEntity.ok().build();
-    }
 
 
 

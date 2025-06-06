@@ -1,22 +1,31 @@
 package io.github.Ital023.jbank.services;
 
 import io.github.Ital023.jbank.controller.dto.CreateWalletDto;
+import io.github.Ital023.jbank.controller.dto.DepositMoneyDto;
+import io.github.Ital023.jbank.entities.Deposit;
 import io.github.Ital023.jbank.entities.Wallet;
 import io.github.Ital023.jbank.exception.DeleteWalletException;
 import io.github.Ital023.jbank.exception.WalletDataAlreadyExistsException;
+import io.github.Ital023.jbank.exception.WalletNotFoundException;
+import io.github.Ital023.jbank.repository.DepositRepository;
 import io.github.Ital023.jbank.repository.WalletRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
 public class WalletService {
 
     private final WalletRepository walletRepository;
+    private final DepositRepository depositRepository;
 
-    public WalletService(WalletRepository walletRepository) {
+    public WalletService(WalletRepository walletRepository, DepositRepository depositRepository) {
         this.walletRepository = walletRepository;
+        this.depositRepository = depositRepository;
     }
 
 
@@ -52,5 +61,25 @@ public class WalletService {
     }
 
 
+    @Transactional
+    public void depositMoney(UUID walletId, DepositMoneyDto dto, String ipAddress) {
+
+        var wallet = walletRepository.findById(walletId)
+                .orElseThrow(() -> new WalletNotFoundException("There is no wallet with this id"));
+
+
+        var deposit = new Deposit();
+        deposit.setWallet(wallet);
+        deposit.setDepositValue(dto.value());
+        deposit.setDepositDateTime(LocalDateTime.now());
+        deposit.setIpAddress(ipAddress);
+
+        depositRepository.save(deposit);
+
+        wallet.setBalance(wallet.getBalance().add(dto.value()));
+
+        walletRepository.save(wallet);
+
+    }
 
 }

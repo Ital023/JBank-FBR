@@ -26,7 +26,18 @@ public class Wallet {
     @Column(name = "balance")
     private BigDecimal balance;
 
+    @Version
+    private Long version;
+
     public Wallet() {
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public UUID getWalletId() {
