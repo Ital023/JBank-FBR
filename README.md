@@ -63,6 +63,21 @@ Ao finalizar este projeto, você terá:
 }
 ```
 
+**Respostas:**
+
+* Sucesso (201 Created)
+* Carteira já existente (422 Unprocessable Entity)
+
+```json
+{
+  "type": "about:blank",
+  "title": "Wallet data already exists",
+  "status": 422,
+  "detail": "cpf or email already exists",
+  "instance": "/wallets"
+}
+```
+
 ### 💰 Depositar Dinheiro
 
 **POST** `/wallets/{wallet_id}/deposits`
@@ -70,6 +85,27 @@ Ao finalizar este projeto, você terá:
 ```json
 {
   "value": 350.0
+}
+```
+
+**Respostas:**
+
+* Sucesso (200 OK)
+* Valor inválido (400 Bad Request)
+
+```json
+{
+  "type": "about:blank",
+  "title": "Invalid request parameters",
+  "status": 400,
+  "detail": "There is invalid fields on the request",
+  "instance": "/wallets/{wallet_id}/deposits",
+  "invalid-params": [
+    {
+      "field": "value",
+      "reason": "must be greater than or equal to 10.00"
+    }
+  ]
 }
 ```
 
@@ -85,9 +121,56 @@ Ao finalizar este projeto, você terá:
 }
 ```
 
+**Respostas:**
+
+* Sucesso (200 OK)
+* Saldo insuficiente (422 Unprocessable Entity)
+
+```json
+{
+  "type": "about:blank",
+  "title": "Transfer not allowed",
+  "status": 422,
+  "detail": "insufficient balance, you current balance is $0.00",
+  "instance": "/transfers"
+}
+```
+
 ### 📑 Consultar Extrato
 
 **GET** `/wallets/{wallet_id}/statements`
+
+**Resposta:**
+
+* Sucesso (200 OK)
+
+```json
+{
+  "wallet": {
+    "walletId": "57d9b8ab-4053-409d-830e-49f46fca56cd",
+    "cpf": "94975975335",
+    "name": "Dylan Whitaker",
+    "email": "dylan@gmail.com",
+    "balance": 700
+  },
+  "statements": [
+    {
+      "statementId": "7a2432c7-b0a5-4dce-ab72-8eba366b15e1",
+      "type": "transfer",
+      "literal": "money received from 03be6c44-492d-4dd8-b7dd-d56de3c81006",
+      "value": 100,
+      "datetime": "2025-06-07T11:37:35.239969",
+      "operation": "CREDIT"
+    }
+  ],
+  "pagination": {
+    "page": 0,
+    "pageSize": 10,
+    "totalElements": 1,
+    "totalPages": 1
+  }
+}
+```
 
 ---
 
