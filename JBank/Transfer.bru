@@ -1,0 +1,19 @@
+meta {
+  name: Transfer
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8080/transfers
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "sender": "a4881944-9317-4d7e-9e16-6132570ba607",
+    "value": 100.0,
+    "receiver": "cb08ce7e-6ee1-491c-8104-874d5c0df1d6"
+  }
+}

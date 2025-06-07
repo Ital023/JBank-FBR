@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_deposit")
+@Table(name = "tb_deposits")
 public class Deposit {
 
     @Id

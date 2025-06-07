@@ -31,17 +31,30 @@ public class TransferService {
         var receiver = walletRepository.findById(dto.receiver())
                 .orElseThrow(() -> new WalletNotFoundException("receiver does not exists"));
 
-        var sender = walletRepository.findById(dto.receiver())
+        var sender = walletRepository.findById(dto.sender())
                 .orElseThrow(() -> new WalletNotFoundException("sender does not exists"));
 
         if (sender.getBalance().compareTo(dto.value()) == -1) {
             throw new TransferException("insufficient balance, you current balance is $" + sender.getBalance());
         }
 
+        sender.setBalance(sender.getBalance().subtract(dto.value()));
+        receiver.setBalance(receiver.getBalance().add(dto.value()));
+        walletRepository.save(sender);
+        walletRepository.save(receiver);
+
+        var transfer = new Transfer();
+        transfer.setReceiver(receiver);
+        transfer.setSender(sender);
+        transfer.setTransferValue(dto.value());
+        transfer.setTransferDateTime(LocalDateTime.now());
+        transferRepository.save(transfer);
+
+        /*
         updateWallets(dto, sender, receiver);
 
         persistTransfer(dto, receiver, sender);
-
+        */
 
     }
 
